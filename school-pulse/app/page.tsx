@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
+import { Header } from "@/app/components/Header";
 
 export default async function Home() {
   const postList = await db.select().from(posts);
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">SchoolPulse</h1>
+      <Header/>
       <Link href="/create" className="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">
         Create New Post
       </Link>

@@ -20,10 +20,12 @@ async function updatePost(formData: FormData) {
 }
 
 export default async function DetailPost({ params }: { params: { id: string } }) {
+    const { id } = await params
+
     const postsResult = await db
         .select()
         .from(posts)
-        .where(eq(posts.id, Number.parseInt(params.id)))
+        .where(eq(posts.id, Number.parseInt(id)))
         .then((res) => res[0]);
 
     if (!postsResult) return <div>Post not found</div>;
@@ -35,7 +37,6 @@ export default async function DetailPost({ params }: { params: { id: string } })
             </Link>
             <h1 className="text-2xl font-bold mb-4">Edit Post</h1>
             <form action={updatePost}>
-                {/* Pass the id as a hidden field */}
                 <input type="hidden" name="id" value={postsResult.id} />
                 <div className="mb-4">
                     <label htmlFor="title" className="block mb-2">

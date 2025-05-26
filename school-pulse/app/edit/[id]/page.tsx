@@ -19,7 +19,7 @@ async function updatePost(formData: FormData) {
     redirect("/");
 }
 
-export default async function DetailPost({ params }: { params: { id: string } }) {
+export default async function DetailPost({ params }: { params: Promise<{ id: string }>}) {
     const { id } = await params
 
     const postsResult = await db

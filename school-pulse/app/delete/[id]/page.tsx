@@ -5,7 +5,7 @@ import Link from "next/link"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-export default async function DeletePost({params}: {params: {id: string}}) {
+export default async function DeletePost({params}: {params: Promise<{id: string}>}) {
     const { id } = await params
 
     const postsResult = await db

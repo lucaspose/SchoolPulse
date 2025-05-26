@@ -1,4 +1,6 @@
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 import {
   Accordion,
@@ -53,6 +55,7 @@ interface Navbar1Props {
       url: string;
     };
   };
+  user?: { signOut: () => void } | null;
 }
 
 const Navbar1 = ({
@@ -144,16 +147,16 @@ const Navbar1 = ({
     login: { text: "Log in", url: "#" },
     signup: { text: "Sign up", url: "#" },
   },
+  user,
 }: Navbar1Props) => {
   return (
     <section className="py-4">
       <div className="container">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
-            <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
-              <span className="text-lg font-semibold">{logo.title}</span>
-            </a>
+            <Link href="/">
+              <Image src="/logo.svg" alt="logo" width={100} height={100} />
+            </Link>
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -163,12 +166,31 @@ const Navbar1 = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <a href={auth.login.url}>{auth.login.text}</a>
-            </Button>
-            <Button asChild size="sm">
-              <a href={auth.signup.url}>{auth.signup.text}</a>
-            </Button>
+            {user ? (
+                <div className="flex items-center gap-2">
+                    <Button
+                        className="bg-blue-500 text-white"
+                        onClick={() => user.signOut()}
+                        size="sm"
+                    >
+                        Sign Out
+                    </Button>
+                    <Button asChild variant="outline" size="sm">
+                        <a href="/handler/account-settings" className="ml-2">
+                            Profile
+                        </a>
+                    </Button>
+                </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <a href={auth?.login.url}>{auth?.login.text}</a>
+                </Button>
+                <Button asChild size="sm">
+                  <a href={auth?.signup.url}>{auth?.signup.text}</a>
+                </Button>
+              </div>
+            )}
           </div>
         </nav>
         <div className="block lg:hidden">

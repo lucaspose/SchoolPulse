@@ -4,12 +4,9 @@ import { eq } from "drizzle-orm"
 import Link from "next/link"
 
 
-export default async function DetailPost({
-    params,
-}: {
-    params: { id: string; }
-}) {
-    const postsResult = await db.select().from(posts).where(eq(posts.id, Number.parseInt(params.id)));
+export default async function DetailPost({ params }: { params: Promise<{ id: string; }> }) {
+    const { id } = await params;
+    const postsResult = await db.select().from(posts).where(eq(posts.id, Number.parseInt(id)));
     const post = postsResult[0];
 
 return (

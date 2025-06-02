@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { stackServerApp } from "@/stack";
 
 async function updatePost(formData: FormData) {
     "use server";
@@ -20,15 +21,17 @@ async function updatePost(formData: FormData) {
 }
 
 export default async function DetailPost({ params }: { params: Promise<{ id: string }>}) {
+    const user = await stackServerApp.getUser({or: 'redirect'});
     const { id } = await params
-
     const postsResult = await db
         .select()
         .from(posts)
         .where(eq(posts.id, Number.parseInt(id)))
         .then((res) => res[0]);
 
-    if (!postsResult) return <div>Post not found</div>;
+    if (!postsResult) return (<div>Post not found</div>);
+    if (user.id != postsResult.author_id)
+        throw new Error("401: Unauthorized")
 
     return (
         <div>

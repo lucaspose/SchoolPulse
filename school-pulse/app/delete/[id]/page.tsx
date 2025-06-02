@@ -4,8 +4,10 @@ import { eq } from "drizzle-orm"
 import Link from "next/link"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { stackServerApp } from "@/stack"
 
 export default async function DeletePost({params}: {params: Promise<{id: string}>}) {
+    await stackServerApp.getUser({ or: 'redirect'});
     const { id } = await params
 
     const postsResult = await db

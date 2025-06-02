@@ -1,14 +1,18 @@
 'use client';
 
+import { useUser } from "@stackframe/stack";
 import createPost from "./createPost";
 import { useState } from "react";
 
 export default function CreateForm() {
+  useUser({ or: 'redirect'});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = () => {
     setIsSubmitting(true);
   };
+
+
 
   return (
     <form action={createPost} onSubmit={handleSubmit}>

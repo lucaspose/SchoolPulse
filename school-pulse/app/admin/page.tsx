@@ -1,4 +1,6 @@
+"use client";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
+import { useUser } from "@stackframe/stack";  
 
 const Data = [
     {
@@ -40,6 +42,11 @@ const Data = [
 ]
 
 export default function AdminPage() {
+    const user = useUser({or : 'redirect'}); 
+    const permissions = user?.usePermission('modo');
+
+    if (!permissions)
+        throw new Error("401: Unauthorized")
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
             <h1 className="text-2xl font-bold mb-8">Admin Dashboard</h1>

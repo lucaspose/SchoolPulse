@@ -7,7 +7,7 @@ export default async function DeleteUser({ params }: { params: Promise<{ id: str
     const user = usersResult.find((u) => u.id === id);
 
     if (!user)
-        return <div>User not found</div>;
+        throw new Error("401: Unauthorized");
     await user.delete();
     return redirect('/admin/users')
 }

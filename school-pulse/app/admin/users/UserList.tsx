@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Trash, Edit } from "lucide-react";
+import { Trash, Edit, Plus, Minus } from "lucide-react";  
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -13,9 +13,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useUser } from "@stackframe/stack";
 
 export function UserList({ users }: { users: any[] }) {
   const router = useRouter();
+  const user = useUser();
+  const isAdmin = user?.usePermission('admin');
 
   if (!users || users.length === 0) {
     return (
@@ -77,6 +80,26 @@ export function UserList({ users }: { users: any[] }) {
                 >
                   <Edit size={16} strokeWidth={2} aria-hidden="true" />
                 </Button>
+                {isAdmin ?
+                  <div>
+                  <Button
+                    className="bg-gray-700 hover:bg-green-600"
+                    variant="destructive"
+                    aria-label={`add perm ${u.displayName ?? u.id}`}
+                    onClick={() => router.push(`/admin/users/perm/add/${u.id}`)}
+                  >
+                    <Plus size={16} strokeWidth={2} aria-hidden="true" />
+                  </Button>
+                  <Button
+                    className="bg-gray-700 hover:bg-red-600"
+                    variant="destructive"
+                    aria-label={`add perm ${u.displayName ?? u.id}`}
+                    onClick={() => router.push(`/admin/users/perm/delete/${u.id}`)}
+                  >
+                    <Minus size={16} strokeWidth={2} aria-hidden="true" />
+                  </Button>
+                  </div> : <></>
+                } 
               </div>
             </div>
           ))}

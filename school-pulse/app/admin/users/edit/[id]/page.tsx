@@ -1,62 +1,42 @@
-import { stackServerApp } from "@/stack";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { stackServerApp } from "@/stack"
+import { CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
+import { ParticleBackground } from "@/components/ui/particle-background"
+import { AnimatedGradient } from "@/components/ui/animated-gradient"
+import { GlowCard } from "@/components/ui/glow-card"
 
 export default async function EditUser({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-    const usersResult = await stackServerApp.listUsers();
-    const user = usersResult.find((u) => u.id === id);
+  const { id } = await params
+  const usersResult = await stackServerApp.listUsers()
+  const user = usersResult.find((u) => u.id === id)
 
+  if (!user) {
     return (
-        <div className="mx-auto max-w-lg justify-center">
-          <h1 className="font-semibold text-2xl text-center py-2">Edit User</h1>
-          <div className="overflow-hidden rounded-lg border border-border bg-background">
-            <Table>
-              <TableBody>
-                <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">
-                  <TableCell className="bg-muted/50 py-2 font-medium">Name</TableCell>
-                  <TableCell className="py-2">
-                    <div className="group relative min-w-[300px]">
-                    <label
-                    htmlFor={id}
-                    className="origin-start absolute top-1/2 block -translate-y-1/2 cursor-text px-1 text-sm text-muted-foreground/70 transition-all group-focus-within:pointer-events-none group-focus-within:top-0 group-focus-within:cursor-default group-focus-within:text-xs group-focus-within:font-medium group-focus-within:text-foreground has-[+input:not(:placeholder-shown)]:pointer-events-none has-[+input:not(:placeholder-shown)]:top-0 has-[+input:not(:placeholder-shown)]:cursor-default has-[+input:not(:placeholder-shown)]:text-xs has-[+input:not(:placeholder-shown)]:font-medium has-[+input:not(:placeholder-shown)]:text-foreground"
-                    >
-                        <span className="inline-flex bg-background px-2">{user?.displayName ?? "No name"}</span>
-                    </label>
-                    <Input id={id} type="name" placeholder="" />
-                    </div>
-                    </TableCell>
-                </TableRow>
-                <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">
-                  <TableCell className="bg-muted/50 py-2 font-medium">Email</TableCell>
-                  <TableCell className="py-2">
-                    <div className="group relative min-w-[300px]">
-                    <label
-                    htmlFor={id}
-                    className="origin-start absolute top-1/2 block -translate-y-1/2 cursor-text px-1 text-sm text-muted-foreground/70 transition-all group-focus-within:pointer-events-none group-focus-within:top-0 group-focus-within:cursor-default group-focus-within:text-xs group-focus-within:font-medium group-focus-within:text-foreground has-[+input:not(:placeholder-shown)]:pointer-events-none has-[+input:not(:placeholder-shown)]:top-0 has-[+input:not(:placeholder-shown)]:cursor-default has-[+input:not(:placeholder-shown)]:text-xs has-[+input:not(:placeholder-shown)]:font-medium has-[+input:not(:placeholder-shown)]:text-foreground"
-                    >
-                        <span className="inline-flex bg-background px-2">{user?.primaryEmail}</span>
-                    </label>
-                    <Input id={id} type="email" placeholder="" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-                <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">
-                  <TableCell className="bg-muted/50 py-2 font-medium">Id</TableCell>
-                  <TableCell className="py-2">{user?.id}</TableCell>
-                </TableRow>
-                <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">
-                    <TableCell className="bg-muted/50 py-2 font-medium">Created At</TableCell>
-                    <TableCell className="py-2">{user?.signedUpAt ? user.signedUpAt.toLocaleString() : ""}</TableCell>
-                </TableRow>
-                <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">
-                  <TableCell className="bg-muted/50 py-2 font-medium">Last Active</TableCell>
-                  <TableCell className="py-2">{user?.lastActiveAt ? user.lastActiveAt.toLocaleString() : ""}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+      <div className="min-h-screen relative overflow-hidden bg-black">
+        <ParticleBackground particleCount={50} color="rgba(132, 90, 223, 0.3)" speed={0.5} />
+        <AnimatedGradient intensity="medium" speed="slow" className="min-h-screen">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-2xl mx-auto text-center">
+              <GlowCard className="backdrop-blur-lg bg-black/40" glowColor="rgba(132, 90, 223, 0.3)">
+                <CardContent className="py-16">
+                  <h1 className="text-2xl font-bold mb-4">Utilisateur introuvable</h1>
+                  <p className="text-muted-foreground mb-6">L'utilisateur que vous souhaitez modifier n'existe pas.</p>
+                  <Button
+                    asChild
+                    className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 border-none transition-all duration-300 hover:shadow-[0_0_15px_rgba(132,90,223,0.5)]"
+                  >
+                    <Link href="/admin/users">
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Retour à la liste
+                    </Link>
+                  </Button>
+                </CardContent>
+              </GlowCard>
+            </div>
           </div>
-          <p className="mt-4 text-center text-sm text-muted-foreground">User Info</p>
-        </div>
+        </AnimatedGradient>
+      </div>
     )
-}
+  }

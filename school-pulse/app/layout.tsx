@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "School Pulse – L’application de signalement pour une gestion rapide et efficace des incidents scolaires",
   description: "School Pulse est une application mobile dédiée aux établissements scolaires, permettant aux élèves, enseignants et personnels de signaler facilement tout incident ou dysfonctionnement (matériel cassé, panne, problème technique, etc.). Grâce à une interface simple et collaborative, les signalements sont centralisés et l'administration peut les suivre, les prioriser et les résoudre plus rapidement. Une solution moderne pour améliorer la réactivité et la qualité de vie dans les établissements scolaires.",
+    generator: 'v0.dev'
 };
 
 export default function RootLayout({

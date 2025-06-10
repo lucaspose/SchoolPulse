@@ -1,7 +1,7 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Trash, Edit, Plus, Minus } from "lucide-react";  
-import { useRouter } from "next/navigation";
+"use client"
+import { Button } from "@/components/ui/button"
+import { Trash, Edit, Plus, Minus, MoreHorizontal } from "lucide-react"
+import { useRouter } from "next/navigation"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,98 +13,200 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useUser } from "@stackframe/stack";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useUser } from "@stackframe/stack"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { GlowCard } from "@/components/ui/glow-card"
+import { useState, useEffect } from "react"
 
 export function UserList({ users }: { users: any[] }) {
-  const router = useRouter();
-  const user = useUser();
-  const isAdmin = user?.usePermission('admin');
+  const router = useRouter()
+  const user = useUser()
+  const isAdmin = user?.usePermission("team_admin")
+  const [visibleUsers, setVisibleUsers] = useState<any[]>([])
+
+  useEffect(() => {
+    // Animate users appearing one by one
+    if (users && users.length > 0) {
+      const timer = setTimeout(() => {
+        setVisibleUsers(users.slice(0, visibleUsers.length + 4))
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [users, visibleUsers])
+
+  useEffect(() => {
+    // Initialize with empty array
+    setVisibleUsers([])
+  }, [])
 
   if (!users || users.length === 0) {
     return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">User Moderation</h1>
-        <p>No users found.</p>
+      <div className="flex flex-col items-center justify-center py-16">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto">
+            <Trash className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Aucun utilisateur trouvé</h3>
+            <p className="text-muted-foreground">La liste des utilisateurs est vide.</p>
+          </div>
+        </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="container mx-auto p-4 flex justify-center">
-      <div className="w-full">
-        <h1 className="text-2xl font-bold mb-6 text-center">User Moderation</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {users.map((u) => (
-            <div key={u.id} className="border rounded p-4 flex flex-col justify-between">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">{u.displayName ?? "No Name"}</h2>
-                <p className="text-gray-700 mb-1">Email: {u.primaryEmail ?? "No Email"}</p>
-                <p className="text-gray-500 mb-1">ID: {u.id}</p>
-                <p className="text-gray-500">
-                  Created At: {u.signedUpAt ? new Date(u.signedUpAt).toLocaleDateString() : "Unknown"}
-                </p>
+    <div className="p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {visibleUsers.map((u, index) => (
+          <GlowCard
+            key={u.id}
+            className="group backdrop-blur-lg bg-black/40 border border-white/10 hover:border-primary/30 transition-all duration-500"
+            glowColor="rgba(132, 90, 223, 0.4)"
+            style={{
+              animationDelay: `${index * 100}ms`,
+            }}
+          >
+            <div className="p-4">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10 ring-2 ring-primary/30 group-hover:ring-primary/50 transition-all duration-300">
+                    <AvatarImage src={u.profileImageUrl || ""} alt={u.displayName || ""} />
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-purple-600 text-primary-foreground">
+                      {u.displayName?.charAt(0)?.toUpperCase() || u.primaryEmail?.charAt(0)?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
+                      {u.displayName || "Nom non défini"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground truncate">{u.primaryEmail || "Email non défini"}</p>
+                  </div>
+                </div>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary transition-colors"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Ouvrir le menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="bg-black/90 backdrop-blur-xl border border-white/10 animate-in fade-in-80 zoom-in-95"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => router.push(`/admin/users/edit/${u.id}`)}
+                      className="hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Modifier
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuItem
+                      onClick={() => router.push(`/admin/users/perm/add/${u.id}`)}
+                      className="hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Ajouter permission
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => router.push(`/admin/users/perm/delete/${u.id}`)}
+                      className="hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                    >
+                      <Minus className="mr-2 h-4 w-4" />
+                      Retirer permission
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-white/10" />
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <DropdownMenuItem
+                          onSelect={(e) => e.preventDefault()}
+                          className="text-red-400 hover:bg-red-950/30 hover:text-red-400 focus:bg-red-950/30 focus:text-red-400"
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Supprimer
+                        </DropdownMenuItem>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="bg-black/90 backdrop-blur-xl border border-white/10">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Êtes-vous absolument sûr ?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Attention : Supprimer cet utilisateur supprimera définitivement son compte et toutes les
+                            données associées du système. Cette action ne peut pas être annulée.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="bg-transparent border border-white/20 hover:bg-white/10">
+                            Annuler
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-600/80 hover:bg-red-700"
+                            onClick={() => router.push(`/admin/users/delete/${u.id}`)}
+                          >
+                            Supprimer
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-              <div className="mt-4 flex space-x-2">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                      <Button
-                      className="bg-gray-700 hover:bg-red-600"
-                      variant="destructive"
-                      aria-label={`Delete user ${u.displayName ?? u.id}`}
-                      >
-                          <Trash size={16} strokeWidth={2} aria-hidden="true" />
-                      </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Warning: Deleting this user will permanently remove their account and all associated data from the system. This action cannot be undone. Please ensure you have reviewed all necessary information before proceeding.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction asChild>
-                          <Button className="hover:bg-red-500" onClick={() => router.push(`/admin/users/delete/${u.id}`)}>
-                              Delete
-                          </Button>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <Button
-                  className="bg-gray-700 hover:bg-blue-600"
-                  variant="destructive"
-                  aria-label={`Edit user ${u.displayName ?? u.id}`}
-                  onClick={() => router.push(`/admin/users/edit/${u.id}`)}
-                >
-                  <Edit size={16} strokeWidth={2} aria-hidden="true" />
-                </Button>
-                {isAdmin ?
-                  <div>
-                  <Button
-                    className="bg-gray-700 hover:bg-green-600"
-                    variant="destructive"
-                    aria-label={`add perm ${u.displayName ?? u.id}`}
-                    onClick={() => router.push(`/admin/users/perm/add/${u.id}`)}
+
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">ID:</span>
+                  <Badge
+                    variant="outline"
+                    className="text-xs font-mono border-primary/20 bg-primary/10 text-primary-foreground"
                   >
-                    <Plus size={16} strokeWidth={2} aria-hidden="true" />
-                  </Button>
-                  <Button
-                    className="bg-gray-700 hover:bg-red-600"
-                    variant="destructive"
-                    aria-label={`add perm ${u.displayName ?? u.id}`}
-                    onClick={() => router.push(`/admin/users/perm/delete/${u.id}`)}
+                    {u.id.slice(0, 8)}...
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Inscrit le:</span>
+                  <span className="text-xs">
+                    {u.signedUpAt ? new Date(u.signedUpAt).toLocaleDateString("fr-FR") : "Inconnu"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <Badge
+                    variant="secondary"
+                    className="text-xs bg-gradient-to-r from-primary/20 to-purple-500/20 border border-primary/30"
                   >
-                    <Minus size={16} strokeWidth={2} aria-hidden="true" />
-                  </Button>
-                  </div> : <></>
-                } 
+                    Utilisateur
+                  </Badge>
+                  <div className="flex space-x-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => router.push(`/admin/users/edit/${u.id}`)}
+                      className="h-7 w-7 p-0 border-white/10 hover:border-primary/50 hover:bg-primary/20 transition-colors"
+                    >
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          </GlowCard>
+        ))}
       </div>
     </div>
-  );
+  )
 }

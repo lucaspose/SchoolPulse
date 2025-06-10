@@ -1,16 +1,22 @@
 import { stackServerApp } from "@/stack";
 import { redirect } from "next/navigation";
 
-export default async function DelUserPerm(params: { params: Promise<{ id: string }> }) {
-    const { id } = await params.params;
-    const user = await stackServerApp.getUser(id);
-    const currentUser = await stackServerApp.getUser({ or : 'redirect'});
-    const team = await stackServerApp.getTeam('modo');
+export default async function RemoveUserPermPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
-    if (!currentUser)
-        throw new Error("401: Unauthorized")
-    if (!user)
-        throw new Error("401: Unauthorized")
-    team?.removeUser(user.id);
-    return redirect(`/admin/users/`);
+  const currentUser = await stackServerApp.getUser({ or: "redirect" });
+  if (!currentUser)
+    throw new Error("401: Unauthorized");
+  const modoTeam = await stackServerApp.getTeam("3086b24e-6828-4b66-b097-58cedaa1ac9c");
+  if (!modoTeam)
+    throw new Error("Team 'modo' introuvable");
+  const userToRemove = await stackServerApp.getUser(id);
+  if (!userToRemove)
+    throw new Error("404: Utilisateur introuvable");
+  try {
+    await modoTeam.removeUser(userToRemove.id);
+  } catch (error) {
+    throw new Error("500: Échec du retrait de l'utilisateur de l'équipe");
+  }
+  return redirect("/admin/users");
 }

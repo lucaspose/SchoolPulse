@@ -37,7 +37,7 @@ SchoolPulse est une plateforme web collaborative dédiée aux établissements sc
 
 ```bash
 git clone https://github.com/lucaspose/SchoolPulse.git
-cd schoolpulse
+cd SchoolPulse
 ```
 
 ## 📸 Démo du site

@@ -44,4 +44,4 @@ cd schoolpulse
 
 Voici un aperçu de l’interface de SchoolPulse pour te donner une idée de son design et de son ergonomie :
 
-![Page d'accueil SchoolPulse](https://postimg.cc/065kL98F)
+![Page d'accueil SchoolPulse](https://i.postimg.cc/DzLS4zRv/Capture-d-cran-2025-08-04-112215.png)
